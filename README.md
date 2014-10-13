@@ -1,7 +1,7 @@
 nyc_positions
 =============
 
-Scraper for NYC full-time employee position data from the Supporting Schedules Budget Docs
+Scraper for NYC full-time employee position data from the Supporting Schedules Budget Docs (A [BetaNYC](http://www.betanyc.us) Joint)
 
 Start with the [Supporting Schedules FY15 Budget PDF](http://www.nyc.gov/html/omb/downloads/pdf/ss6_14.pdf)
 
