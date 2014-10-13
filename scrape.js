@@ -1,29 +1,26 @@
 var lineReader = require('line-reader');
+var fs = require('fs');
 var args = process.argv.slice(2); 
 
 var agencyId,
 		agencyName,
 		uoaId,
 		uoaName,
-		rowCount=0;
+		positionCount=0;
+
+var output = fs.createWriteStream('output.csv', {'flags': 'w'});
+
+output.write("agencyId,agencyName,uoaId,uoaName,line,description,payBank,titleCode,minRate,maxRate,numPositions,annualRate,\n");
 
 lineReader.eachLine(args[0], function(line, last) {
-  // do whatever you want with line...
-  //Keep track of Agency and Unit of Appropriation...
 
-  parseLine(line, parsePositions);
+  parseLine(line);
 
-
-
-
-  if(last){
-    // or check if it's the last one
-  }
 });
 
 
 
-function parseLine(line, callback) {
+function parseLine(line) {
 	var lineString = String(line);
 	m = lineString.search("AGENCY:");
 
@@ -66,7 +63,6 @@ function parseLine(line, callback) {
 	//search for 4 digits followed by a space (a line in a position schedule)
 	m = m.search(/[0-9]{4}\ /)
 	if(m>-1){
-		rowCount++;
 		//console.log("----" + lineString + " " + rowCount);
 
 		//split the line into its parts and write to csv (log for now)
@@ -74,31 +70,48 @@ function parseLine(line, callback) {
 	var line = lineString.substring(0,4);
 
 	//find a single Char surrounded by spaces.  Necessary because the fixed-width isn't quite right.
-	var d = lineString.match(/\ [A-Z]\ /);
+	var d = lineString.match(/\ [A-Z]\ [0-9]{3}/);
+	console.log(d.index);
 
-	var description = lineString.substring(5,d.index).toTitleCase().trim();
+	var description = lineString.substring(5,d.index).toTitleCase().trim().replace(/,/g," ");
 
 	var payBank = lineString.substring(d.index+1,d.index+6);
 
 	var titleCode = lineString.substring(d.index+7,d.index+12);
 
-	var minMaxRate = lineString.substring(d.index+13,d.index+30).trim();
+	var minMaxRate = lineString.substring(d.index+13,d.index+30).trim().replace(/,/g,"");
+	var minRate = parseInt(minMaxRate.split("-")[0]);
+	var maxRate = parseInt(minMaxRate.split("-")[1]);
 
-	var numPositions = lineString.substring(80,95).trim();
+	var numPositions = parseInt(lineString.substring(80,95).trim().replace(/,/g,""));
 
-	var annualRate = parseFloat(lineString.substring(92,108).trim().replace(",",""));
+	positionCount += numPositions;
+	//console.log(positionCount);
+
+	var annualRate = parseInt(lineString.substring(92,108).trim().replace(/,/g,""));
 
 
 	console.log(lineString);
-	console.log(line + "," + description + "," + payBank + "," + titleCode + "," + minMaxRate + "," + numPositions + "," + annualRate);
+
+	var outputLine = agencyId + "," 
+		+ agencyName + "," 
+		+ uoaId + "," 
+		+ uoaName + "," 
+		+ line + "," 
+		+ description + "," 
+		+ payBank + "," 
+		+ titleCode + "," 
+		+ minRate + "," 
+		+ maxRate + "," 
+		+ numPositions + "," 
+		+ annualRate + "\n"
+
+	output.write(outputLine);
+	console.log(outputLine);
 
 	}
 }
 
-
-function parsePositions(lineString) {
-	console.log(lineString);
-}
 
 //from http://stackoverflow.com/questions/196972/convert-string-to-title-case-with-javascript
 String.prototype.toTitleCase = function() {
