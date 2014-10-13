@@ -28,7 +28,7 @@ agencyId,agencyName,uoaId,uoaName,objectId,objectName,line,description,payBank,t
 002,Mayoralty,020,Office of the Mayor-PS,001,Full Year Positions,1172,Assistant to the Deputy M,D 002,05278,49492,212614,6,1046611
 ...
 ```
-Some notes:  Each row in output.csv represents one job title
+Some notes:  Each row in output.csv represents one job title which falls under the following hierarchy: Agency>Unit of Appropriation>Object.
 
 A job title can have many authorized positions.  For example, the line below represents the job title "Teacher", which has 47,434 positions.  The total annual spend for all of these Teacher positions is $3,570,332,102, averaging to $75,269.47 annual salary per teacher.
 ```
