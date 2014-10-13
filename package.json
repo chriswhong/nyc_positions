@@ -1,0 +1,8 @@
+{
+  "name": "nyc_positions",
+  "description": "scraper for NYC Full Time Positions Data from the budget",
+  "dependencies": {
+    "fs": "0.0.2",
+    "line-reader": "0.2.4"
+  }
+}
