@@ -6,11 +6,13 @@ var agencyId,
 		agencyName,
 		uoaId,
 		uoaName,
+		objectId,
+		objectName,
 		positionCount=0;
 
 var output = fs.createWriteStream('output.csv', {'flags': 'w'});
 
-output.write("agencyId,agencyName,uoaId,uoaName,line,description,payBank,titleCode,minRate,maxRate,numPositions,annualRate,\n");
+output.write("agencyId,agencyName,uoaId,uoaName,objectId,objectName,line,description,payBank,titleCode,minRate,maxRate,numPositions,annualRate,\n");
 
 lineReader.eachLine(args[0], function(line, last) {
 
@@ -48,16 +50,36 @@ function parseLine(line) {
 	if(m>-1){
 		var tempUoaId = String(lineString.match(/[0-9]{3}/));
 		var s = lineString.indexOf(tempUoaId);
-		var tempUoaName = lineString.substr(s+3,100).trim().toTitleCase();;
+		var tempUoaName = lineString.substr(s+3,100).trim().toTitleCase();
 
 		if(uoaId != tempUoaId) {
 			uoaId = tempUoaId;
 			uoaName = tempUoaName;
 
-			console.log("UOA: " + uoaId + " " + uoaName)
+			console.log("UOA: " + uoaId + " " + uoaName);
 		};
 
 	};
+
+	m = lineString.search("OBJECT:");
+	if(m>-1){
+		var tempObjectId = String(lineString.match(/[0-9]{3}/))
+		var s = lineString.indexOf(tempObjectId);
+		var tempObjectName = lineString.substr(s+3,100).trim().toTitleCase();
+
+		if(objectId != tempObjectId) {
+			objectId = tempObjectId;
+			objectName = tempObjectName;
+
+			console.log("Object: " + objectId + " " + objectName);
+		};
+
+
+	}
+
+
+
+
 	//get first 5 characters of line
 	m = lineString.substring(0,5);
 	//search for 4 digits followed by a space (a line in a position schedule)
@@ -97,6 +119,8 @@ function parseLine(line) {
 		+ agencyName + "," 
 		+ uoaId + "," 
 		+ uoaName + "," 
+		+ objectId + "," 
+		+ objectName + "," 
 		+ line + "," 
 		+ description + "," 
 		+ payBank + "," 
